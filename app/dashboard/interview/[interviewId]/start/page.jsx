@@ -21,23 +21,30 @@ const StartInterview = ({ params }) => {
     GetInterviewDetails();
   }, [])
 
-  let jsonMockResp;
+  const GetInterviewDetails = async () => {
+    const result = await db.select().from(MockInterview).where(eq(MockInterview.mockId, params.interviewId))
 
-  try {
-    jsonMockResp = JSON.parse(result[0].jsonMockResp);
-  } catch (error) {
-    console.error('Error parsing JSON:', error);
-    return;
-  }
+    
 
-  // 🛠️ Handle both array and object structure
-  if (Array.isArray(jsonMockResp)) {
-    setMockInterviewQuestions(jsonMockResp); // Direct array
-  } else if (jsonMockResp?.interviewQuestions && Array.isArray(jsonMockResp.interviewQuestions)) {
-    setMockInterviewQuestions(jsonMockResp.interviewQuestions); // Object with array inside
-  } else {
-    console.warn("Unexpected structure for jsonMockResp", jsonMockResp);
-    setMockInterviewQuestions([]); // fallback to empty
+
+    let jsonMockResp;
+
+    try {
+      jsonMockResp = JSON.parse(result[0].jsonMockResp);
+    } catch (error) {
+      console.error('Error parsing JSON:', error);
+      return;
+    }
+  
+    // 🛠️ Handle both array and object structure
+    if (Array.isArray(jsonMockResp)) {
+      setMockInterviewQuestions(jsonMockResp); // Direct array
+    } else if (jsonMockResp?.interviewQuestions && Array.isArray(jsonMockResp.interviewQuestions)) {
+      setMockInterviewQuestions(jsonMockResp.interviewQuestions); // Object with array inside
+    } else {
+      console.warn("Unexpected structure for jsonMockResp", jsonMockResp);
+      setMockInterviewQuestions([]); // fallback to empty
+    }
   }
 
   return (
